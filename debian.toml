@@ -12,3 +12,10 @@ arch = "amd64"
 section = "tools"
 priority = "optional"
 description = "Simple debian package generator"
+
+[[packages]]
+name = "debber-help"
+arch = "amd64"
+section = "tools"
+priority = "optional"
+description = "Simple debian package generator - helper content"
