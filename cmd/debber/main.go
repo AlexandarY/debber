@@ -8,6 +8,8 @@ import (
 	"github.com/spf13/cobra"
 )
 
+var debianFile string
+
 var rootCmd = &cobra.Command{
 	Use:   "debber",
 	Short: "Simple debian package generator",
@@ -30,7 +32,7 @@ var createCmd = &cobra.Command{
 	Short: "Create a debian/ directory from debian.toml",
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Fprintf(os.Stdout, "Creating the debian/ dir and content\n")
-		content, err := debber.ParseFile("debian.toml")
+		content, err := debber.ParseFile(debianFile)
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "Error: %s\n", err)
 		}
@@ -39,6 +41,8 @@ var createCmd = &cobra.Command{
 }
 
 func main() {
+	rootCmd.PersistentFlags().StringVarP(&debianFile, "name", "n", "debian.toml", "Specify the name of the debian config file")
+
 	rootCmd.AddCommand(newCmd)
 	rootCmd.AddCommand(createCmd)
 
