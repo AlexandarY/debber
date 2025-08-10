@@ -23,7 +23,11 @@ var newCmd = &cobra.Command{
 	Short: "Generate a new debian.toml template",
 	Long:  `Generate a new debian.toml file with all required fields for a package build`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Fprintf(os.Stdout, "Generating debian.toml")
+		fmt.Fprintf(os.Stdout, "Generating %s\n", debianFile)
+		err := debber.CreateNewDebFile(debianFile)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "ERROR: %s\n", err)
+		}
 	},
 }
 
