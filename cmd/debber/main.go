@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/AlexandarY/debber/internal/debber"
 	"github.com/spf13/cobra"
 )
 
@@ -28,7 +29,12 @@ var createCmd = &cobra.Command{
 	Use:   "create",
 	Short: "Create a debian/ directory from debian.toml",
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Fprintf(os.Stdout, "Creating the debian/ dir and content")
+		fmt.Fprintf(os.Stdout, "Creating the debian/ dir and content\n")
+		content, err := debber.ParseFile("debian.toml")
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Error: %s\n", err)
+		}
+		fmt.Fprintln(os.Stdout, content)
 	},
 }
 
