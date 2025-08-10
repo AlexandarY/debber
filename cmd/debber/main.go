@@ -41,6 +41,14 @@ var createCmd = &cobra.Command{
 			fmt.Fprintf(os.Stderr, "Error: %s\n", err)
 		}
 		fmt.Fprintln(os.Stdout, content)
+		debDir, err := debber.CreateDebianDirectory("tmp/", content)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Error: %s\n", err)
+		}
+		err = debDir.CreateControl()
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Error: %s\n", err)
+		}
 	},
 }
 

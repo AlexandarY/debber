@@ -1,0 +1,14 @@
+Source: {{ .Source.Name }}
+Section: {{ .Source.Section }}
+Priority: {{ .Source.Priority }}
+Maintainer: {{ .Source.Maintainer }}
+Standards-Version: {{ .Source.StandardsVersion }}
+
+{{ range $package := .Packages -}}
+Package: {{ $package.Name }}
+Architecture: {{ $package.Arch }}
+Section: {{ $package.Section }}
+Priority: {{ $package.Priority }}
+Description: {{ $package.Description }}
+
+{{ end -}}
