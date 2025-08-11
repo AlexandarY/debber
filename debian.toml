@@ -4,7 +4,13 @@ maintainer = "Alexandar Yovchev <alexyov@protonmail.com>"
 section = "tools"
 priority = "optional"
 standards-version = "4.7.0"
-rules = "#!/usr/bin/make -f"
+raw_rules = """#!/usr/bin/make -f
+
+%:
+	dh $@
+alex:
+	@echo "is testing something"
+"""
 
 [[packages]]
 name = "debber"

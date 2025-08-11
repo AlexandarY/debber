@@ -22,6 +22,7 @@ type DebianSource struct {
 	Priority         string `toml:"priority"`
 	StandardsVersion string `toml:"standards-version"`
 	Rules            string `toml:"rules"`
+	RawRules         string `toml:"raw_rules"`
 }
 
 // Represents the information about a binary package that is build from the source
@@ -50,8 +51,8 @@ func (d *DebianFile) Validate() error {
 	if d.Source.StandardsVersion == "" {
 		return errors.New("source.standards-version cannot be missing or an empty string!")
 	}
-	if d.Source.Rules == "" {
-		return errors.New("source.rules cannot be missing or an empty string!")
+	if d.Source.Rules != "" && d.Source.RawRules != "" {
+		return errors.New("you cannot have both source.rules and source.raw_rules defined!")
 	}
 
 	if len(d.Packages) == 0 {

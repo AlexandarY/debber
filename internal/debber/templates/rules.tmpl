@@ -1,0 +1,11 @@
+{{ if .RawRules -}}
+{{ .RawRules }}
+{{ else -}}
+{{ if .Default -}}
+#!/usr/bin/make -f
+
+%:
+	dh $@
+{{ else -}}
+{{ end -}}
+{{ end -}}

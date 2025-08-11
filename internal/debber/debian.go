@@ -52,3 +52,27 @@ func (d *DebDir) CreateControl() error {
 
 	return nil
 }
+
+// Generate the `debian/rules` file
+func (d *DebDir) CreateRules() error {
+	rules, err := template.ParseFS(debianTemplates, "templates/rules.tmpl")
+	if err != nil {
+		return err
+	}
+
+	rulesFile, err := os.Create(fmt.Sprintf("%s/rules", d.path))
+	if err != nil {
+		return err
+	}
+	if d.data.Source.Rules == "" && d.data.Source.RawRules == "" {
+		err = rules.Execute(rulesFile, struct{ Default bool }{Default: true})
+		return err
+	} else if d.data.Source.Rules == "" && d.data.Source.RawRules != "" {
+		err = rules.Execute(rulesFile, struct {
+			Default  bool
+			RawRules string
+		}{Default: false, RawRules: d.data.Source.RawRules})
+		return err
+	}
+	return nil
+}

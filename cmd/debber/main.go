@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"os"
 
 	"github.com/AlexandarY/debber/internal/debber"
@@ -23,10 +24,10 @@ var newCmd = &cobra.Command{
 	Short: "Generate a new debian.toml template",
 	Long:  `Generate a new debian.toml file with all required fields for a package build`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Fprintf(os.Stdout, "Generating %s\n", debianFile)
+		log.Printf("Generating %s\n", debianFile)
 		err := debber.CreateNewDebFile(debianFile)
 		if err != nil {
-			fmt.Fprintf(os.Stderr, "ERROR: %s\n", err)
+			log.Fatalf("Error: %s\n", err)
 		}
 	},
 }
@@ -35,19 +36,23 @@ var createCmd = &cobra.Command{
 	Use:   "create",
 	Short: "Create a debian/ directory from debian.toml",
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Fprintf(os.Stdout, "Creating the debian/ dir and content\n")
+		log.Println("Creating the debian/ dir and content")
 		content, err := debber.ParseFile(debianFile)
 		if err != nil {
-			fmt.Fprintf(os.Stderr, "Error: %s\n", err)
+			log.Fatalf("Error: %s\n", err)
 		}
-		fmt.Fprintln(os.Stdout, content)
 		debDir, err := debber.CreateDebianDirectory("tmp/", content)
 		if err != nil {
+			log.Fatalf("Error: %s\n", err)
 			fmt.Fprintf(os.Stderr, "Error: %s\n", err)
 		}
 		err = debDir.CreateControl()
 		if err != nil {
-			fmt.Fprintf(os.Stderr, "Error: %s\n", err)
+			log.Fatalf("Error: %s\n", err)
+		}
+		err = debDir.CreateRules()
+		if err != nil {
+			log.Fatalf("Error: %s\n", err)
 		}
 	},
 }
