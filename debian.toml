@@ -8,8 +8,10 @@ raw_rules = """#!/usr/bin/make -f
 
 %:
 	dh $@
-alex:
-	@echo "is testing something"
+override_dh_auto_build:
+	GOOS=linux go build -ldflags "-s -w" -o debber cmd/debber/main.go
+override_dh_install:
+	dh_install debber usr/bin/
 """
 [[source.changelog]]
 version = "0.1.0"
@@ -20,7 +22,7 @@ changes = [
     "This is a bug fix for the package",
 ]
 changed_by = "Alexandar Yovchev <alexyov@protonmail.com>"
-date = "Mon, 10 08 2025 23:01:23 +0000"
+date = "Mon, 10 Aug 2025 23:01:23 +0000"
 
 [[source.changelog]]
 version = "0.1.1"
@@ -28,7 +30,7 @@ distribution = ["bookworm"]
 urgency = "low"
 changes = ["This is a bugfix"]
 changed_by = "Alexandar Yovchev <alexyov@protonmail.com>"
-date = "Mon, 10 08 2025 23:05:23 +0000"
+date = "Mon, 10 Aug 2025 23:05:23 +0000"
 
 [source.copyright]
 source = "<url://example.com>"
