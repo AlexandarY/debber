@@ -11,6 +11,24 @@ raw_rules = """#!/usr/bin/make -f
 alex:
 	@echo "is testing something"
 """
+[[source.changelog]]
+version = "0.1.0"
+distribution = ["bookworm"]
+urgency = "low"
+changes = [
+    "This is a new feature for the package",
+    "This is a bug fix for the package",
+]
+changed_by = "Alexandar Yovchev <alexyov@protonmail.com>"
+date = "Mon, 10 08 2025 23:01:23 +0000"
+
+[[source.changelog]]
+version = "0.1.1"
+distribution = ["bookworm"]
+urgency = "low"
+changes = ["This is a bugfix"]
+changed_by = "Alexandar Yovchev <alexyov@protonmail.com>"
+date = "Mon, 10 08 2025 23:05:23 +0000"
 
 [[packages]]
 name = "debber"

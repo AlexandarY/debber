@@ -1,0 +1,9 @@
+{{ range $idx, $change := .Changes -}}
+{{ $.Package }} ({{ $change.Version }}) {{ joinStr $change.Distribution ", " }}; urgency={{ $change.Urgency}}
+{{ range $entry := $change.Changes }}
+  * {{ $entry -}}
+{{ end }}
+
+ -- {{ $change.ChangedBy }}  {{ $change.Date }}
+{{ if ne (len .Changes) (add $idx +1) -}}{{ printf "\n" }}{{ end -}}
+{{ end -}}

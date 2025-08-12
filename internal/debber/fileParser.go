@@ -16,13 +16,14 @@ type DebianFile struct {
 
 // Represents the source information that is used for the build
 type DebianSource struct {
-	Name             string `toml:"name"`
-	Maintainer       string `toml:"maintainer"`
-	Section          string `toml:"section"`
-	Priority         string `toml:"priority"`
-	StandardsVersion string `toml:"standards-version"`
-	Rules            string `toml:"rules"`
-	RawRules         string `toml:"raw_rules"`
+	Name             string                 `toml:"name"`
+	Maintainer       string                 `toml:"maintainer"`
+	Section          string                 `toml:"section"`
+	Priority         string                 `toml:"priority"`
+	StandardsVersion string                 `toml:"standards-version"`
+	Rules            string                 `toml:"rules"`
+	RawRules         string                 `toml:"raw_rules"`
+	Changelog        []DebianChangelogEntry `toml:"changelog"`
 }
 
 // Represents the information about a binary package that is build from the source
@@ -32,6 +33,16 @@ type DebianPackage struct {
 	Section     string `toml:"section"`
 	Priority    string `toml:"priority"`
 	Description string `toml:"description"`
+}
+
+// Represents the data for `debian/changelog`
+type DebianChangelogEntry struct {
+	Version      string   `toml:"version"`
+	Distribution []string `toml:"distribution"`
+	Urgency      string   `toml:"urgency"`
+	Changes      []string `toml:"changes"`
+	ChangedBy    string   `toml:"changed_by"`
+	Date         string   `toml:"date"`
 }
 
 // Validate that the required fields are provided
@@ -53,6 +64,27 @@ func (d *DebianFile) Validate() error {
 	}
 	if d.Source.Rules != "" && d.Source.RawRules != "" {
 		return errors.New("you cannot have both source.rules and source.raw_rules defined!")
+	}
+	if len(d.Source.Changelog) == 0 {
+		return errors.New("At least one changelog entry is needed! None were provided in [[source.changelog]]")
+	} else {
+		for idx, change := range d.Source.Changelog {
+			if change.Version == "" {
+				return fmt.Errorf("No `version` was provided for change with index %d", idx)
+			}
+			if len(change.Distribution) == 0 {
+				return fmt.Errorf("No `distribution` was provided for change with index %d and version %s", idx, change.Version)
+			}
+			if change.Urgency == "" {
+				return fmt.Errorf("No `urgency` was provided for change with index %d and version %s", idx, change.Version)
+			}
+			if len(change.Changes) == 0 {
+				return fmt.Errorf("No `changes` was provided for change with index %d and version %s", idx, change.Version)
+			}
+			if change.Date == "" {
+				return fmt.Errorf("No `date` was provided for change with index %d and version %s", idx, change.Version)
+			}
+		}
 	}
 
 	if len(d.Packages) == 0 {
@@ -113,6 +145,7 @@ func CreateNewDebFile(fileName string) error {
 
 	var newData DebianFile
 	newData.Packages = append(newData.Packages, DebianPackage{})
+	newData.Source.Changelog = append(newData.Source.Changelog, DebianChangelogEntry{})
 	content, err := toml.Marshal(&newData)
 	if err != nil {
 		return err

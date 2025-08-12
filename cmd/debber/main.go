@@ -54,6 +54,10 @@ var createCmd = &cobra.Command{
 		if err != nil {
 			log.Fatalf("Error: %s\n", err)
 		}
+		err = debDir.CreateChangelog()
+		if err != nil {
+			log.Fatalf("Error: %s\n", err)
+		}
 	},
 }
 

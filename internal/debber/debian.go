@@ -6,11 +6,20 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
 	"text/template"
 )
 
 //go:embed templates/*
 var debianTemplates embed.FS
+
+// define custom functions to be used in template parsing
+func CustomFunctions() template.FuncMap {
+	return template.FuncMap{
+		"joinStr": strings.Join,
+		"add":     func(a, b int) int { return a + b },
+	}
+}
 
 // Represents the debian directory
 type DebDir struct {
@@ -75,4 +84,26 @@ func (d *DebDir) CreateRules() error {
 		return err
 	}
 	return nil
+}
+
+// Genreate the `debian/changelog` file
+func (d *DebDir) CreateChangelog() error {
+	changelog, err := template.New("changelog.tmpl").Funcs(CustomFunctions()).ParseFS(debianTemplates, "templates/changelog.tmpl")
+	if err != nil {
+		return err
+	}
+
+	changelogFile, err := os.Create(fmt.Sprintf("%s/changelog", d.path))
+	if err != nil {
+		return err
+	}
+
+	err = changelog.Execute(changelogFile, struct {
+		Package string
+		Changes []DebianChangelogEntry
+	}{
+		Package: d.data.Source.Name,
+		Changes: d.data.Source.Changelog,
+	})
+	return err
 }
