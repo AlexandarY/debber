@@ -59,3 +59,12 @@ description = 'An awesome tool that does awesome stuff'
 ```
 
 To create the `debian/` directory, run `debber create`.
+
+## How to build?
+
+To build the tool youeself, you need to have the following available:
+
+  * golang - `1.24.6` or newer
+  * make
+
+Then run the `make build` target. The built binary will be available in `target/debber`.
