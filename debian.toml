@@ -30,6 +30,21 @@ changes = ["This is a bugfix"]
 changed_by = "Alexandar Yovchev <alexyov@protonmail.com>"
 date = "Mon, 10 08 2025 23:05:23 +0000"
 
+[source.copyright]
+source = "<url://example.com>"
+upstream_name = "debber"
+upstream_contact = "Firstname Lastname <email@domain.com>"
+
+[[source.copyright.files]]
+files = "*"
+copyright = ["2025, Alexandar Yovchev"]
+license = "Apache-2.0"
+
+[[source.copyright.files]]
+files = "debian/"
+copyright = ["2025, Alexandar Yovchev"]
+license = "GPL-2+"
+
 [[packages]]
 name = "debber"
 arch = "amd64"

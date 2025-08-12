@@ -107,3 +107,20 @@ func (d *DebDir) CreateChangelog() error {
 	})
 	return err
 }
+
+// Genreate the `debian/copyright` file
+// TODO: Add License text to the copyright file
+func (d *DebDir) CreateCopyright() error {
+	copyright, err := template.New("copyright.tmpl").Funcs(CustomFunctions()).ParseFS(debianTemplates, "templates/copyright.tmpl")
+	if err != nil {
+		return err
+	}
+
+	copyrightFile, err := os.Create(fmt.Sprintf("%s/copyright", d.path))
+	if err != nil {
+		return err
+	}
+
+	err = copyright.Execute(copyrightFile, d.data.Source.Copyright)
+	return err
+}

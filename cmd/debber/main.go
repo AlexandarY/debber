@@ -58,6 +58,10 @@ var createCmd = &cobra.Command{
 		if err != nil {
 			log.Fatalf("Error: %s\n", err)
 		}
+		err = debDir.CreateCopyright()
+		if err != nil {
+			log.Fatalf("Error: %s\n", err)
+		}
 	},
 }
 

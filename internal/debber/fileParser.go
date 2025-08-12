@@ -24,6 +24,7 @@ type DebianSource struct {
 	Rules            string                 `toml:"rules"`
 	RawRules         string                 `toml:"raw_rules"`
 	Changelog        []DebianChangelogEntry `toml:"changelog"`
+	Copyright        DebianCopyright        `toml:"copyright"`
 }
 
 // Represents the information about a binary package that is build from the source
@@ -43,6 +44,22 @@ type DebianChangelogEntry struct {
 	Changes      []string `toml:"changes"`
 	ChangedBy    string   `toml:"changed_by"`
 	Date         string   `toml:"date"`
+}
+
+// Represents the data for `debian/copyright`
+type DebianCopyright struct {
+	Format          string                 `toml:"format"`
+	Source          string                 `toml:"source"`
+	UpstreamName    string                 `toml:"upstream_name"`
+	UpstreamContact string                 `toml:"upstream_contact"`
+	Files           []DebianCopyrightFiles `toml:"files"`
+}
+
+// Represents the data for the files stanza in `debian/copyright`
+type DebianCopyrightFiles struct {
+	Files     string   `toml:"files"`
+	Copyright []string `toml:"copyright"`
+	License   string   `toml:"license"`
 }
 
 // Validate that the required fields are provided
@@ -83,6 +100,21 @@ func (d *DebianFile) Validate() error {
 			}
 			if change.Date == "" {
 				return fmt.Errorf("No `date` was provided for change with index %d and version %s", idx, change.Version)
+			}
+		}
+	}
+	if len(d.Source.Copyright.Files) == 0 {
+		return errors.New("At least one entry is required in `source.copyright.files`!")
+	} else {
+		for idx, fileStanza := range d.Source.Copyright.Files {
+			if fileStanza.Files == "" {
+				return fmt.Errorf("Expected `files` pattern for `source.copyright.files` with index %d", idx)
+			}
+			if len(fileStanza.Copyright) == 0 {
+				return fmt.Errorf("Expected at least one `copyright` entry for `source.copyright.files` with Files '%s' and index %d", fileStanza.Files, idx)
+			}
+			if fileStanza.License == "" {
+				return fmt.Errorf("Expected `license` entry for `source.copyright.files` with Files '%s' and index %d", fileStanza.Files, idx)
 			}
 		}
 	}
@@ -146,6 +178,24 @@ func CreateNewDebFile(fileName string) error {
 	var newData DebianFile
 	newData.Packages = append(newData.Packages, DebianPackage{})
 	newData.Source.Changelog = append(newData.Source.Changelog, DebianChangelogEntry{})
+	newData.Source.Copyright = DebianCopyright{
+		Format:          "https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/",
+		Source:          "<url://example.com>",
+		UpstreamName:    "<project-name>",
+		UpstreamContact: "<preferred name and address to reach the upstream project>",
+		Files: []DebianCopyrightFiles{
+			{
+				Files:     "*",
+				Copyright: []string{"<years> <author's name here>"},
+				License:   "<license name here>",
+			},
+			{
+				Files:     "debian/*",
+				Copyright: []string{"<years> <author's name here>"},
+				License:   "GPL-2+",
+			},
+		},
+	}
 	content, err := toml.Marshal(&newData)
 	if err != nil {
 		return err

@@ -1,0 +1,16 @@
+{{ if .Format }}{{ .Format }}{{ else }}Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/{{ end }}
+{{ if .UpstreamName -}}
+Upstream-Name: {{ .UpstreamName }}
+{{ end -}}
+{{ if .UpstreamContact -}}
+Upstream-Contact: {{ .UpstreamContact }}
+{{ end -}}
+{{ if .Source -}}
+Source: {{ .Source }}
+{{ end -}}
+
+{{ range $fileEntry := .Files }}
+Files: {{ $fileEntry.Files }}
+Copyright: {{ joinStr $fileEntry.Copyright "\n  " }}
+License: {{ $fileEntry.License }}
+{{ end -}}
